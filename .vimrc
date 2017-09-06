@@ -49,8 +49,17 @@ Plug 'plugin/BufExplorer.vim'
 Plug 'rking/ag.vim'
 Plug 'majutsushi/tagbar'
 Plug 'jlanzarotta/bufexplorer'
+Plug 'airblade/vim-gitgutter'
 
 call plug#end()
+
+
+noremap <silent> gj :GitGutterNextHunk<CR>
+noremap <silent> gk :GitGutterPrevHunk<CR>
+noremap <silent> gq :GitGutterUndoHunk<CR>
+noremap <silent> gv :GitGutterPreviewHunk<CR>
+noremap <silent> ga :GitGutterStageHunk<CR>
+noremap <silent> gc :pclose<CR>
 
 
 "------------airline------------
