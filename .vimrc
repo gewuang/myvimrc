@@ -53,7 +53,7 @@ Plug 'airblade/vim-gitgutter'
 
 call plug#end()
 
-
+"--------------------airblade/vim-gitgutter-------------------
 noremap <silent> gj :GitGutterNextHunk<CR>
 noremap <silent> gk :GitGutterPrevHunk<CR>
 noremap <silent> gq :GitGutterUndoHunk<CR>
