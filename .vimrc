@@ -227,7 +227,7 @@ let g:ctrlp_follow_symlinks=1
 nnoremap <f5> :!ctags -R<CR>
 noremap <silent> bu :BufExplorer<CR>
 "NERDTree快捷键
-nmap <F2> :NERDTree  <CR>
+nmap <F2> :NERDTreeToggle  <CR>
 " NERDTree.vim
 let g:NERDTreeWinPos="left"
 let g:NERDTreeWinSize=25
