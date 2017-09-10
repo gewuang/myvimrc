@@ -202,14 +202,16 @@ vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
 "
 " When you search with Ag, display your results in cope by doing:
 "   <leader>cc
-"
+
 " To go to the next search result do:
 "   <leader>n
 "
 " To go to the previous search results do:
 "   <leader>p
 "
-map <leader>cc :botright cope<cr>
+noremap <silent> cc :botright copen<CR>
+noremap <silent> cl :cclose <CR>
+"map <leader>cc :botright copen<cr>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
