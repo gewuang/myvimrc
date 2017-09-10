@@ -21,6 +21,18 @@ else
     set background=dark
 endif
 
+"insert mode direction key
+inoremap <C-h> <Left>
+inoremap <c-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+inoremap <C-d> <del>
+
+"系统剪贴板
+vmap <c-c> "+y<esc>
+nmap <c-v> "+p<esc>
+inoremap <c-v> <c-r>+
+
 " plug.vim 配置
 call plug#begin('~/.vim/plugged')
 
