@@ -50,6 +50,7 @@ Plug 'rking/ag.vim'
 Plug 'majutsushi/tagbar'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'airblade/vim-gitgutter'
+Plug 'mhinz/vim-startify'
 
 call plug#end()
 
