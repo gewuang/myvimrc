@@ -29,9 +29,9 @@ inoremap <C-l> <Right>
 inoremap <C-d> <del>
 
 "系统剪贴板
-vmap <c-c> "+y<esc>
-nmap <c-v> "+p<esc>
-inoremap <c-v> <c-r>+
+"vmap <c-c> "+y<esc>
+"nmap <c-v> "+p<esc>
+"inoremap <c-v> <c-r>+
 
 " plug.vim 配置
 call plug#begin('~/.vim/plugged')
@@ -193,7 +193,7 @@ nmap <F3> :cprev<CR>
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
 " Open Ag and put the cursor in the right position
-map <leader>g :Ag
+"map <leader>g :Ag
 
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
