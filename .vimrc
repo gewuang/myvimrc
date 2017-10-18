@@ -28,6 +28,12 @@ inoremap <C-k> <Up>
 inoremap <C-l> <Right>
 inoremap <C-d> <del>
 
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-h> <C-W>h
+map <C-k> <C-W>k
+map <C-l> <C-W>l
+
 "系统剪贴板
 "vmap <c-c> "+y<esc>
 "nmap <c-v> "+p<esc>
