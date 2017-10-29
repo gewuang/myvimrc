@@ -15,6 +15,8 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set cursorline
 set encoding=utf-8
+set vb t_vb=
+
 if has('gui_running')
     set background=light
 else
