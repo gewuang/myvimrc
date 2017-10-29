@@ -63,8 +63,9 @@ Plug 'https://github.com/vim-airline/vim-airline'
 " Unmanaged plugin (manually installed and updated)
 " Plug '~/my-prototype-plugin'
 
-Plug 'plugin/BufExplorer.vim'
 Plug 'rking/ag.vim'
+Plug 'Mark'
+Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'airblade/vim-gitgutter'
