@@ -66,7 +66,7 @@ Plug 'https://github.com/vim-airline/vim-airline'
 " Plug '~/my-prototype-plugin'
 
 Plug 'rking/ag.vim'
-Plug 'Mark'
+"Plug 'Mark'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'jlanzarotta/bufexplorer'
