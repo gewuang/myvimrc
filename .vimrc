@@ -55,6 +55,8 @@ Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
 Plug 'https://github.com/kien/ctrlp.vim'
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/vim-airline/vim-airline'
+Plug 'https://github.com/vim-scripts/AutoComplPop.git'
+Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
 
 " Plugin options
 " Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
@@ -224,6 +226,18 @@ noremap <silent> cl :cclose <CR>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
+
+" => OmniCppComplete.git ---------------------------
+set completeopt=menu,menuone
+let OmniCpp_MayCompleteDot=1        " 打开  . 操作符
+let OmniCpp_MayCompleteArrow=1      " 打开 -> 操作符
+let OmniCpp_MayCompleteScope=1      " 打开 :: 操作符
+let OmniCpp_NamespaceSearch=1       " 打开命名空间
+let OmniCpp_GlobalScopeSearch=1
+let OmniCpp_DefaultNamespace=["std"]
+let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
+let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
+
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
