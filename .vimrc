@@ -16,6 +16,7 @@ set termencoding=utf-8
 set cursorline
 set encoding=utf-8
 set vb t_vb=
+set tags+=~/.vim/systags
 
 if has('gui_running')
     set background=light
@@ -24,8 +25,8 @@ else
 endif
 
 "insert mode direction key
-inoremap <C-h> <Left>
-inoremap <c-j> <Down>
+inoremap <C-y> <Left>
+inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
 inoremap <C-d> <del>
@@ -73,7 +74,8 @@ Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'airblade/vim-gitgutter'
-Plug 'mhinz/vim-startify'
+Plug 'scrooloose/nerdcommenter'
+"Plug 'mhinz/vim-startify'
 
 call plug#end()
 
@@ -238,6 +240,8 @@ let OmniCpp_DefaultNamespace=["std"]
 let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
 let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
 
+" => scrooloose/nerdcommenter ------------------------------
+let g:NERDSpaceDelims=1
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
