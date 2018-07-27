@@ -58,6 +58,7 @@ Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'https://github.com/vim-scripts/AutoComplPop.git'
 Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
+Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 
 " Plugin options
 " Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
@@ -126,57 +127,6 @@ if has("cscope")
   set cscopeverbose  
 endif
 
-" To do the first type of search, hit 'CTRL-\', followed by one of the
-" cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
-" search will be displayed in the current window.  You can use CTRL-T to
-" go back to where you were before the search.  
-"
-
-nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>  
-nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>  
-nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>  
-
-
-" Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
-" makes the vim window split horizontally, with search result displayed in
-" the new window.
-"
-" (Note: earlier versions of vim may not have the :scs command, but it
-" can be simulated roughly via:
-"    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>  
-
-nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR> 
-nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR> 
-nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>   
-nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR> 
-
-
-" Hitting CTRL-space *twice* before the search type does a vertical 
-" split instead of a horizontal one (vim 6 and up only)
-"
-" (Note: you may wish to put a 'set splitright' in your .vimrc
-" if you prefer the new window on the right instead of the left
-
-nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>   
-nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR> 
-nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
-
-
-
 " c:Find functions calling this function        //查找调用本函数的函数
 " d:Find functions called by this function      //查找本函数调用的函数
 " e:Find this egrep pattern                     //查找egrep模式，相当于egrep功能，但查找速度快多了
@@ -240,8 +190,83 @@ let OmniCpp_DefaultNamespace=["std"]
 let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
 let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
 
+" => DoxygenToolkit.vim ------------------------------
+
+let g:DoxygenToolkit_authorName="gewuang:751702112@qq.com"
+let s:licenseTag = "\<enter>function: \<enter>"
+let s:licenseTag = s:licenseTag . "author:gewuang\<enter>"
+let s:licenseTag = s:licenseTag . "return: "
+let g:DoxygenToolkit_licenseTag = s:licenseTag
+let g:DoxygenToolkit_briefTag_funcName="yes"
+let g:doxygen_enhanced_color=1
+
+
+if !exists("g:DoxygenToolkit_briefTag_lic_pre")
+    let g:DoxygenToolkit_briefTag_lic_pre = "@brief:   "
+endif
+if !exists("g:DoxygenToolkit_briefTag_pre")
+    let g:DoxygenToolkit_briefTag_pre = "@brief: "
+endif
+if !exists("g:DoxygenToolkit_fileTag")
+    let g:DoxygenToolkit_fileTag = "@file:    "
+endif
+if !exists("g:DoxygenToolkit_authorTag")
+    let g:DoxygenToolkit_authorTag = "@author:  "
+endif
+if !exists("g:DoxygenToolkit_dateTag")
+    let g:DoxygenToolkit_dateTag = "@date:    "
+endif
+if !exists("g:DoxygenToolkit_versionTag")
+    let g:DoxygenToolkit_versionTag = "@version: "
+endif
+
+
+""""""""""""""""""""""""""
+" Doxygen license comment
+""""""""""""""""""""""""""
+function! <SID>DoxygenLicenseFunc()
+  call s:InitializeParameters()
+  " Test authorName variable
+  if !exists("g:DoxygenToolkit_authorName")
+    let g:DoxygenToolkit_authorName = input("Enter name of the author (generally yours...) : ")
+  endif
+  mark d
+ 
+  " Get file name
+  let l:fileName = expand('%:t')
+  let l:year = strftime("%Y")
+  let l:copyright = "Copyright (c) "
+  exec "normal O".s:startCommentBlock
+  exec "normal o".s:interCommentTag.l:copyright."\<enter>".s:interCommentTag
+  exec "normal o".s:interCommentTag.l:license
+  exec "normal o".s:interCommentTag.g:DoxygenToolkit_fileTag.l:fileName
+  exec "normal o".s:interCommentTag.g:DoxygenToolkit_briefTag_lic_pre
+  mark d
+  exec "normal o".s:interCommentTag.g:DoxygenToolkit_authorTag.g:DoxygenToolkit_authorName
+  exec "normal o".s:interCommentTag.g:DoxygenToolkit_versionTag."1.0"
+  let l:date = strftime("%Y-%m-%d")
+  exec "normal o".s:interCommentTag.g:DoxygenToolkit_dateTag.l:date
+  if( s:endCommentBlock != "" )
+    exec "normal o".s:endCommentBlock
+  endif
+  exec "normal `d"
+  call s:RestoreParameters()
+  startinsert!
+endfunction
+
+
+noremap <silent> fl :DoxAuthor <CR>
+noremap <silent> ff :Dox <CR>
+
 " => scrooloose/nerdcommenter ------------------------------
 let g:NERDSpaceDelims=1
+
+function! s:Printdebugmsg()
+    let l:print_msg='printf("#DEBUG:[%s]:%d----\n", __FUNCTION__, __LINE__);'
+    exec "normal o".l:print_msg
+    startinsert!
+endfunction
+command! -nargs=0 Pk :call <SID>Printdebugmsg()
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
@@ -265,7 +290,7 @@ let g:ctrlp_by_filename=1
 let g:ctrlp_match_window_reversed=0
 let g:ctrlp_mruf_max=500
 let g:ctrlp_follow_symlinks=1
-nnoremap <f5> :!ctags -R<CR>
+
 noremap <silent> bu :BufExplorer<CR>
 "NERDTree快捷键
 nmap <F2> :NERDTreeToggle  <CR>
