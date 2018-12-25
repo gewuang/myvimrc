@@ -16,7 +16,9 @@ set termencoding=utf-8
 set cursorline
 set encoding=utf-8
 set vb t_vb=
-set tags+=~/.vim/systags
+" 使用gf跳转到对应定义文件
+set path+=/usr/local/include/ 
+" set tags+=~/.vim/systags
 
 if has('gui_running')
     set background=light
