@@ -18,16 +18,23 @@ set encoding=utf-8
 set vb t_vb=
 " 使用gf跳转到对应定义文件
 set path+=/usr/local/include/ 
+set path+=/usr/local/lib/node_modules
+" /usr/local/lib/node_modules
 " set tags+=~/.vim/systags
 
-if has('gui_running')
-    set background=light
-else
-    set background=dark
-endif
+" if $COLORTERM == 'truecolor'
+    " set termguicolors
+    " colorscheme s
+" else
+    " set term=xterm
+    " set t_Co=256
+    " colorscheme solarized
+" endif
+
+set background=dark
 
 "insert mode direction key
-inoremap <C-y> <Left>
+inoremap <C-h> <Left>
 inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
@@ -52,15 +59,21 @@ call plug#begin('~/.vim/plugged')
 
 " On-demand loading
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+" Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
 
 " Using git URL
 Plug 'https://github.com/kien/ctrlp.vim'
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/vim-airline/vim-airline'
-Plug 'https://github.com/vim-scripts/AutoComplPop.git'
-Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
+" Plug 'https://github.com/vim-scripts/AutoComplPop.git'
+" Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
+Plug 'https://github.com/fatih/vim-go.git'
+Plug 'https://github.com/nsf/gocode.git'
+Plug 'https://github.com/ternjs/tern_for_vim.git'
+Plug 'https://github.com/Valloric/YouCompleteMe'
+Plug 'suan/vim-instant-markdown'
+" Plug 'Valloric/YouCompleteMe'
 
 " Plugin options
 " Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
@@ -71,6 +84,8 @@ Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 " Unmanaged plugin (manually installed and updated)
 " Plug '~/my-prototype-plugin'
 
+Plug 'maksimr/vim-jsbeautify'
+Plug 'mbbill/undotree'
 Plug 'rking/ag.vim'
 "Plug 'Mark'
 Plug 'kshenoy/vim-signature'
@@ -80,7 +95,19 @@ Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdcommenter'
 "Plug 'mhinz/vim-startify'
 
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
 call plug#end()
+
+nnoremap <silent> <F5> :call JsBeautify()<CR>
+
+"--------------------mbbill/undotree-------------------
+nnoremap <F9> :UndotreeToggle<cr>
+if has("persistent_undo")
+    set undodir=~/.undodir/
+    set undofile
+endif
 
 "--------------------airblade/vim-gitgutter-------------------
 noremap <silent> gj :GitGutterNextHunk<CR>
@@ -89,7 +116,11 @@ noremap <silent> gq :GitGutterUndoHunk<CR>
 noremap <silent> gv :GitGutterPreviewHunk<CR>
 noremap <silent> ga :GitGutterStageHunk<CR>
 noremap <silent> gc :pclose<CR>
-
+let g:gitgutter_max_signs = 500  " default value
+let g:gitgutter_grep = 'ag'
+let g:gitgutter_terminal_reports_focus=0
+set updatetime=100
+" let g:gitgutter_highlight_lines = 1
 
 "------------airline------------
 set laststatus=2  "永远显示状态栏
@@ -113,7 +144,7 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 if has("cscope")
   " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
   set cscopetag
-  set csprg=/usr/bin/cscope
+  " set csprg=/usr/bin/cscope
   set csto=0
   set cst
   set nocsverb
@@ -303,8 +334,52 @@ let g:NERDTreeShowLineNumbers=1
 let g:neocomplcache_enable_at_startup = 1 
 
 "默认最大化窗口打开
-au GUIEnter * simalt ~
+" au GUIEnter * simalt ~
+
+" => YouCompleteMe ---------------------------
+" 方法跳转 "
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" let g:ycm_key_list_select_completion = ['<Down>']
+" set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+let g:ycm_seed_identifiers_with_syntax=1    " 语法关键字补全
+"在注释输入中也能补全
+let g:ycm_complete_in_comments = 1
+"在字符串输入中也能补全
+let g:ycm_complete_in_strings = 1
+"注释和字符串中的文字也会被收入补全
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+
+let g:ycm_semantic_triggers =  {
+  \   'c' : ['->', '.'],
+  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+  \             're!\[.*\]\s'],
+  \   'ocaml' : ['.', '#'],
+  \   'cpp,objcpp' : ['->', '.', '::'],
+  \   'perl' : ['->'],
+  \   'php' : ['->', '::'],
+  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+  \   'ruby' : ['.', '::'],
+  \   'lua' : ['.', ':'],
+  \   'erlang' : [':'],
+  \ }
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+            \ 'cs,lua,javascript': ['re!\w{2}'],
+            \ }
 
 " 快捷键，快速导入git模板
 nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
+
+" => vim-go ---------------------------
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_disable_autoinstall = 0
+
+inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
+inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 
