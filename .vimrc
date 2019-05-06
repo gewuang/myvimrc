@@ -1,4 +1,6 @@
-set nu
+" set nu
+set noswapfile
+set smarttab
 set t_Co=256
 syntax enable
 syntax on
@@ -22,14 +24,14 @@ set path+=/usr/local/lib/node_modules
 " /usr/local/lib/node_modules
 " set tags+=~/.vim/systags
 
-" if $COLORTERM == 'truecolor'
-    " set termguicolors
-    " colorscheme s
-" else
-    " set term=xterm
-    " set t_Co=256
-    " colorscheme solarized
-" endif
+if $COLORTERM == 'truecolor'
+    set termguicolors
+    colorscheme s
+else
+    set term=xterm
+    set t_Co=256
+    colorscheme solarized
+endif
 
 set background=dark
 
@@ -61,6 +63,12 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
 
+" Plug 'chemzqm/macnote.vim'
+Plug 'Shougo/vimproc.vim', {'do': 'yes\|make'}
+
+
+Plug 'Chiel92/vim-autoformat'
+
 " Using git URL
 Plug 'https://github.com/kien/ctrlp.vim'
 Plug 'https://github.com/tpope/vim-fugitive'
@@ -68,12 +76,13 @@ Plug 'https://github.com/vim-airline/vim-airline'
 " Plug 'https://github.com/vim-scripts/AutoComplPop.git'
 " Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
-Plug 'https://github.com/fatih/vim-go.git'
+" Plug 'https://github.com/fatih/vim-go.git'
 Plug 'https://github.com/nsf/gocode.git'
 Plug 'https://github.com/ternjs/tern_for_vim.git'
 Plug 'https://github.com/Valloric/YouCompleteMe'
-Plug 'suan/vim-instant-markdown'
+" Plug 'suan/vim-instant-markdown'
 " Plug 'Valloric/YouCompleteMe'
+Plug 'https://github.com/boydos/emmet-vim.git'
 
 " Plugin options
 " Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
@@ -96,9 +105,20 @@ Plug 'scrooloose/nerdcommenter'
 "Plug 'mhinz/vim-startify'
 
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
+" Plug 'plasticboy/vim-markdown'
+Plug 'vim-scripts/TaskList.vim'
 
 call plug#end()
+
+"--------------------macnote-------------------
+" function! SaveWithTS(filename) range
+    " execute "Note " . a:filename . strftime("-%Y-%m-%d.md")
+" endfunction
+
+" command! -nargs=0 Tn :call SaveWithTS("ramon")
+" " let g:note_cwindow_open=1
+" let g:note_denite_quickfix=1
+" command! -nargs=0 Pk :call <SID>Printdebugmsg()
 
 nnoremap <silent> <F5> :call JsBeautify()<CR>
 
@@ -179,6 +199,11 @@ nmap <space>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 nmap <space>l :/<C-R>=expand("<cword>")<CR><CR>
 nmap <F4> :cnext<CR>
 nmap <F3> :cprev<CR>
+
+" nmap <leader>td <Plug>TaskList
+noremap <silent> to :TaskList<CR>
+
+noremap <silent> tl :marks<CR>
 
 " => .vimrc ag.vim 配置----------------------------
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -341,18 +366,25 @@ let g:neocomplcache_enable_at_startup = 1
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'       " 配置全局路径
+let g:ycm_confirm_extra_conf=0   " 每次直接加载该文件，不提示是否要加载
+
+" 关闭诊断显示功能(已经使用了ale进行异步语法检查)
+let g:ycm_show_diagnostics_ui = 0
 " let g:ycm_key_list_select_completion = ['<Down>']
-" set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 let g:ycm_seed_identifiers_with_syntax=1    " 语法关键字补全
-"在注释输入中也能补全
+" 在注释输入中也能补全
 let g:ycm_complete_in_comments = 1
-"在字符串输入中也能补全
+" 在字符串输入中也能补全
 let g:ycm_complete_in_strings = 1
 "注释和字符串中的文字也会被收入补全
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
 
 let g:ycm_semantic_triggers =  {
   \   'c' : ['->', '.'],
+  \   'js' : ['.'],
   \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
   \             're!\[.*\]\s'],
   \   'ocaml' : ['.', '#'],
@@ -364,22 +396,22 @@ let g:ycm_semantic_triggers =  {
   \   'lua' : ['.', ':'],
   \   'erlang' : [':'],
   \ }
-let g:ycm_semantic_triggers =  {
-            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-            \ 'cs,lua,javascript': ['re!\w{2}'],
-            \ }
 
 " 快捷键，快速导入git模板
 nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 
 " => vim-go ---------------------------
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-let g:go_disable_autoinstall = 0
+" let g:go_highlight_functions = 1
+" let g:go_highlight_methods = 1
+" let g:go_highlight_structs = 1
+" let g:go_highlight_operators = 1
+" let g:go_highlight_build_constraints = 1
+" let g:go_disable_autoinstall = 0
 
 inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
+
+"F3自动格式化代码
+noremap <F12> :Autoformat<CR>
+let g:autoformat_verbosemode=1
 
