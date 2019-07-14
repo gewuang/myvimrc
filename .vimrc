@@ -1,5 +1,6 @@
 " set nu
 set noswapfile
+set backspace=indent,eol,start
 set smarttab
 set t_Co=256
 syntax enable
@@ -14,9 +15,11 @@ set cindent
 set ignorecase                " ignore case
 set ambiwidth=double
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set fileformats=unix,dos
 set termencoding=utf-8
-set cursorline
 set encoding=utf-8
+set cursorline
+" set encoding=utf-8
 set vb t_vb=
 " 使用gf跳转到对应定义文件
 set path+=/usr/local/include/ 
@@ -24,14 +27,31 @@ set path+=/usr/local/lib/node_modules
 " /usr/local/lib/node_modules
 " set tags+=~/.vim/systags
 
-if $COLORTERM == 'truecolor'
-    set termguicolors
-    colorscheme s
-else
-    set term=xterm
+if !has("gui_running")
     set t_Co=256
-    colorscheme solarized
+    set term=screen-256color
 endif
+set t_Co=256
+
+" colorscheme solarized
+" fix cursor display in cygwin
+" if has("win32unix")
+    " let &t_ti.="\e[1 q"
+    " let &t_SI.="\e[5 q"
+    " let &t_EI.="\e[1 q"
+    " let &t_te.="\e[0 q"
+" endif
+
+" if $COLORTERM == 'truecolor'
+    " set termguicolors
+    " set term=xterm
+    " set t_Co=256
+    " colorscheme solarized
+    " " colorscheme s
+" else
+    " set term=xterm
+    " set t_Co=256
+" endif
 
 set background=dark
 
@@ -83,6 +103,7 @@ Plug 'https://github.com/Valloric/YouCompleteMe'
 " Plug 'suan/vim-instant-markdown'
 " Plug 'Valloric/YouCompleteMe'
 Plug 'https://github.com/boydos/emmet-vim.git'
+Plug 'https://github.com/jiangmiao/auto-pairs'
 
 " Plugin options
 " Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
@@ -107,18 +128,12 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'godlygeek/tabular'
 " Plug 'plasticboy/vim-markdown'
 Plug 'vim-scripts/TaskList.vim'
+Plug 'davidhalter/jedi'
 
 call plug#end()
 
-"--------------------macnote-------------------
-" function! SaveWithTS(filename) range
-    " execute "Note " . a:filename . strftime("-%Y-%m-%d.md")
-" endfunction
-
-" command! -nargs=0 Tn :call SaveWithTS("ramon")
-" " let g:note_cwindow_open=1
-" let g:note_denite_quickfix=1
-" command! -nargs=0 Pk :call <SID>Printdebugmsg()
+"--------------------auto-pairs-------------------
+let g:AutoPairs = {'(':')', '<':'>', '[':']', '{':'}',"'":"'",'"':'"'}
 
 nnoremap <silent> <F5> :call JsBeautify()<CR>
 
@@ -154,7 +169,7 @@ nmap > :bn<CR>
 
 " => majutsushi/tagbar -------------------------
 if !empty("$HOME/.vim/plugged/tagbar")
-    nnoremap <silent> <F8> :TagbarToggle<CR>
+    noremap <space>b :TagbarToggle<CR>
     let g:tagbar_right=1
     let g:tagbar_zoomwidth=1
 endif
@@ -197,8 +212,8 @@ nmap <space>f :cs find f <C-R>=expand("<cword>")<CR><CR>
 nmap <space>i :cs find i ^<C-R>=expand("<cword>")<CR>$<CR>
 nmap <space>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 nmap <space>l :/<C-R>=expand("<cword>")<CR><CR>
-nmap <F4> :cnext<CR>
-nmap <F3> :cprev<CR>
+nmap <space>n :cnext<CR>
+nmap <space>p :cprev<CR>
 
 " nmap <leader>td <Plug>TaskList
 noremap <silent> to :TaskList<CR>
@@ -238,25 +253,25 @@ map <leader>n :cn<cr>
 map <leader>p :cp<cr>
 
 " => OmniCppComplete.git ---------------------------
-set completeopt=menu,menuone
-let OmniCpp_MayCompleteDot=1        " 打开  . 操作符
-let OmniCpp_MayCompleteArrow=1      " 打开 -> 操作符
-let OmniCpp_MayCompleteScope=1      " 打开 :: 操作符
-let OmniCpp_NamespaceSearch=1       " 打开命名空间
-let OmniCpp_GlobalScopeSearch=1
-let OmniCpp_DefaultNamespace=["std"]
-let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
-let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
+" set completeopt=menu,menuone
+" let OmniCpp_MayCompleteDot=1        " 打开  . 操作符
+" let OmniCpp_MayCompleteArrow=1      " 打开 -> 操作符
+" let OmniCpp_MayCompleteScope=1      " 打开 :: 操作符
+" let OmniCpp_NamespaceSearch=1       " 打开命名空间
+" let OmniCpp_GlobalScopeSearch=1
+" let OmniCpp_DefaultNamespace=["std"]
+" let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
+" let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
 
-" => DoxygenToolkit.vim ------------------------------
+" " => DoxygenToolkit.vim ------------------------------
 
-let g:DoxygenToolkit_authorName="gewuang:751702112@qq.com"
-let s:licenseTag = "\<enter>function: \<enter>"
-let s:licenseTag = s:licenseTag . "author:gewuang\<enter>"
-let s:licenseTag = s:licenseTag . "return: "
-let g:DoxygenToolkit_licenseTag = s:licenseTag
-let g:DoxygenToolkit_briefTag_funcName="yes"
-let g:doxygen_enhanced_color=1
+" let g:DoxygenToolkit_authorName="gewuang:751702112@qq.com"
+" let s:licenseTag = "\<enter>function: \<enter>"
+" let s:licenseTag = s:licenseTag . "author:gewuang\<enter>"
+" let s:licenseTag = s:licenseTag . "return: "
+" let g:DoxygenToolkit_licenseTag = s:licenseTag
+" let g:DoxygenToolkit_briefTag_funcName="yes"
+" let g:doxygen_enhanced_color=1
 
 
 if !exists("g:DoxygenToolkit_briefTag_lic_pre")
@@ -324,7 +339,8 @@ function! s:Printdebugmsg()
     exec "normal o".l:print_msg
     startinsert!
 endfunction
-command! -nargs=0 Pk :call <SID>Printdebugmsg()
+" command! -nargs=0 Pk :call <SID>Printdebugmsg()
+noremap <space>k :call <SID>Printdebugmsg()<CR>
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
@@ -351,12 +367,20 @@ let g:ctrlp_follow_symlinks=1
 
 noremap <silent> bu :BufExplorer<CR>
 "NERDTree快捷键
-nmap <F2> :NERDTreeToggle  <CR>
+" nmap <F2> :NERDTreeToggle  <CR>
+noremap <space>a :NERDTreeToggle<CR>
 " NERDTree.vim
 let g:NERDTreeWinPos="left"
 let g:NERDTreeWinSize=25
-let g:NERDTreeShowLineNumbers=1
+" let g:NERDTreeShowLineNumbers=1
 let g:neocomplcache_enable_at_startup = 1 
+let g:NERDChristmasTree=1
+let g:NERDTreeAutoCenter=1
+" let NERDTreeBookmarksFile=$VIM.'\Data\NerdBookmarks.txt'
+let g:NERDTreeMouseMode=2
+let g:NERDTreeShowBookmarks=1
+let g:NERDTreeShowFiles=1
+let g:NERDTreeShowHidden=1
 
 "默认最大化窗口打开
 " au GUIEnter * simalt ~
@@ -367,11 +391,26 @@ nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'       " 配置全局路径
+" let g:ycm_key_invoke_completion = '<space>z'
+" let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'       " 配置全局路径
+let g:ycm_server_python_interpreter='/usr/bin/python'
 let g:ycm_confirm_extra_conf=0   " 每次直接加载该文件，不提示是否要加载
+let g:ycm_add_preview_to_completeopt = 0
+" 使用ctags生成的tags文件
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_auto_trigger = 1
+
+" let g:ycm_cache_omnifunc = 0
+
+" 输入第一个字符就开始补全
+let g:ycm_min_num_of_chars_for_completion=1
 
 " 关闭诊断显示功能(已经使用了ale进行异步语法检查)
 let g:ycm_show_diagnostics_ui = 0
+let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_enable_diagnostic_highlighting = 0
+let g:ycm_echo_current_diagnostic = 0
 " let g:ycm_key_list_select_completion = ['<Down>']
 set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 let g:ycm_seed_identifiers_with_syntax=1    " 语法关键字补全
@@ -398,7 +437,8 @@ let g:ycm_semantic_triggers =  {
   \ }
 
 " 快捷键，快速导入git模板
-nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
+" nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
+noremap <space>v ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 
 " => vim-go ---------------------------
 " let g:go_highlight_functions = 1
@@ -412,6 +452,35 @@ inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><U
 inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 
 "F3自动格式化代码
-noremap <F12> :Autoformat<CR>
+" noremap <F12> :Autoformat<CR>
+noremap <space>m :Autoformat<CR>
 let g:autoformat_verbosemode=1
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+    \ }
 
