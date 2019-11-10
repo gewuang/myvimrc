@@ -13,7 +13,7 @@ set shiftwidth=4
 set expandtab
 set cindent
 set ignorecase                " ignore case
-set ambiwidth=double
+" set ambiwidth=double
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set fileformats=unix,dos
 set termencoding=utf-8
