@@ -19,44 +19,25 @@ set fileformats=unix,dos
 set termencoding=utf-8
 set encoding=utf-8
 set cursorline
-" set encoding=utf-8
 set vb t_vb=
 " 使用gf跳转到对应定义文件
 set path+=/usr/local/include/
 set path+=/usr/local/lib/node_modules
-" /usr/local/lib/node_modules
-" set tags+=~/.vim/systags
 
 if !has("gui_running")
     set t_Co=256
     " set term=screen-256color
 endif
 set t_Co=256
-
-" colorscheme solarized
-" fix cursor display in cygwin
-" if has("win32unix")
-" let &t_ti.="\e[1 q"
-" let &t_SI.="\e[5 q"
-" let &t_EI.="\e[1 q"
-" let &t_te.="\e[0 q"
-" endif
-
-" if $COLORTERM == 'truecolor'
-" set termguicolors
-" set term=xterm
-" set t_Co=256
-" colorscheme solarized
-" " colorscheme s
-" else
-" set term=xterm
-" set t_Co=256
-" endif
+" colorscheme molokai
+" colorscheme OceanicNext 
+" set fillchars=vert: 
+highlight VertSplit ctermbg=black ctermfg=gray
 
 set background=dark
 
 "insert mode direction key
-inoremap <C-u> <Left>
+inoremap <C-y> <Left>
 inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
@@ -68,36 +49,25 @@ map <C-h> <C-W>h
 map <C-k> <C-W>k
 map <C-l> <C-W>l
 
-"系统剪贴板
-"vmap <c-c> "+y<esc>
-"nmap <c-v> "+p<esc>
-"inoremap <c-v> <c-r>+
-
 " plug.vim 配置
 call plug#begin('~/.vim/plugged')
 
+" 静态代码检查
 Plug 'https://github.com/dense-analysis/ale'
-
 " rst
 Plug 'https://github.com/nvie/vim-rst-tables'
 " On-demand loading
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-" vimprocbang $cmd
-Plug 'Shougo/vimproc.vim', {'do': 'yes\|make'}
+" Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " 美化工具
 Plug 'Chiel92/vim-autoformat'
 " 补全
-" Plug 'https://github.com/maralla/completor.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " 快速打开文件
 Plug 'https://github.com/kien/ctrlp.vim'
-" 快速打开文件
-Plug 'https://github.com/tpope/vim-fugitive'
 " git辅助工具
+Plug 'https://github.com/tpope/vim-fugitive'
+" line
 Plug 'https://github.com/vim-airline/vim-airline'
-" 补全工具
-" Plug 'https://github.com/vim-scripts/AutoComplPop.git'
-" Plug 'https://github.com/vim-scripts/OmniCppComplete.git'
 " 代码注释软件
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 " go命令工具
@@ -108,15 +78,10 @@ Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 Plug 'https://github.com/ternjs/tern_for_vim.git'
 " markdown预览
 Plug 'https://github.com/suan/vim-instant-markdown'
-" 匹配符号
-" Plug 'https://github.com/jiangmiao/auto-pairs'
 
 " Plugin outside ~/.vim/plugged with post-update hook
 " unix命令行工具
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-
-" Unmanaged plugin (manually installed and updated)
-" Plug '~/my-prototype-plugin'
 
 " HTML, CSS, JavaScript, PHP, JSON, etc.
 Plug 'elzr/vim-json'
@@ -125,14 +90,7 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'gko/vim-coloresque', { 'for': ['vim-plug', 'php', 'html', 'javascript', 'css', 'less'] }
 Plug 'pangloss/vim-javascript', { 'for' :['javascript', 'vim-plug'] }
 
-" Plug 'ncm2/ncm2'
-" Plug 'ncm2/ncm2-path'
-" Plug 'ncm2/ncm2-jedi'
-" Plug 'ncm2/ncm2-bufword'
-" Plug 'ncm2/ncm2-match-highlight'
-" Plug 'ncm2/ncm2-markdown-subscope'
-" Plug 'roxma/ncm-clang'
-" " Plug 'roxma/clang_complete'
+" Plug 'roxma/clang_complete'
 " " Language Server
 " Plug 'autozimu/LanguageClient-neovim', {
 " \ 'branch': 'next',
@@ -166,9 +124,6 @@ Plug 'vim-scripts/TaskList.vim'
 Plug 'davidhalter/jedi'
 
 call plug#end()
-
-"--------------------auto-pairs-------------------
-" let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"'}
 
 nnoremap <silent> <F5> :call JsBeautify()<CR>
 
@@ -231,14 +186,6 @@ if has("cscope")
     set cscopeverbose
 endif
 
-" c:Find functions calling this function        //查找调用本函数的函数
-" d:Find functions called by this function      //查找本函数调用的函数
-" e:Find this egrep pattern                     //查找egrep模式，相当于egrep功能，但查找速度快多了
-" f:Find this file                              //查找并打开文件，类似vim的find功能
-" g:Find this definition                        //查找函数、宏、枚举等定义的位置，类似ctags的功能
-" i:Find files #including this file             //查找包含本文件的文件
-" s:Find this C symbol                          //查找C语言符号，即查找函数名、宏、枚举值等出现的地方
-" t:Find assignments to                         //查找指定的字符串
 nmap <space>s :cs find s <C-R>=expand("<cword>")<CR><CR>
 nmap <space>g :cs find g <C-R>=expand("<cword>")<CR><CR>
 nmap <space>c :cs find c <C-R>=expand("<cword>")<CR><CR>
@@ -253,7 +200,6 @@ nmap <space>p :cprev<CR>
 
 " nmap <leader>td <Plug>TaskList
 noremap <silent> to :TaskList<CR>
-
 noremap <silent> tl :marks<CR>
 
 " => .vimrc ag.vim 配置----------------------------
@@ -287,17 +233,6 @@ noremap <silent> cl :cclose <CR>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
-
-" => OmniCppComplete.git ---------------------------
-" set completeopt=menu,menuone
-" let OmniCpp_MayCompleteDot=1        " 打开  . 操作符
-" let OmniCpp_MayCompleteArrow=1      " 打开 -> 操作符
-" let OmniCpp_MayCompleteScope=1      " 打开 :: 操作符
-" let OmniCpp_NamespaceSearch=1       " 打开命名空间
-" let OmniCpp_GlobalScopeSearch=1
-" let OmniCpp_DefaultNamespace=["std"]
-" let OmniCpp_ShowPrototypeInAbbr=1  " 打开显示函数原型
-" let OmniCpp_SelectFirstItem = 2    " 自动弹出时自动跳至第一个
 
 " " => DoxygenToolkit.vim ------------------------------
 
@@ -361,7 +296,6 @@ function! <SID>DoxygenLicenseFunc()
     startinsert!
 endfunction
 
-
 noremap <silent> fl :DoxAuthor <CR>
 noremap <silent> ff :Dox <CR>
 
@@ -400,65 +334,15 @@ let g:ctrlp_mruf_max=500
 let g:ctrlp_follow_symlinks=1
 
 noremap <silent> bu :BufExplorer<CR>
-"NERDTree快捷键
-" nmap <F2> :NERDTreeToggle  <CR>
-noremap <space>a :NERDTreeToggle<CR>
-" NERDTree.vim
-let g:NERDTreeWinPos="left"
-let g:NERDTreeWinSize=25
-" let g:NERDTreeShowLineNumbers=1
-let g:neocomplcache_enable_at_startup = 1
-let g:NERDChristmasTree=1
-let g:NERDTreeAutoCenter=1
-" let NERDTreeBookmarksFile=$VIM.'\Data\NerdBookmarks.txt'
-let g:NERDTreeMouseMode=2
-let g:NERDTreeShowBookmarks=1
-let g:NERDTreeShowFiles=1
-let g:NERDTreeShowHidden=1
-
-" NERDTress File highlighting
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-    exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-    exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-
-call NERDTreeHighlightFile('sh', 'cyan', 'none', 'cyan', '#151515')
-" call NERDTreeHighlightFile('*', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
-call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
-call NERDTreeHighlightFile('js', 'red', 'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
-
-
-"默认最大化窗口打开
-" au GUIEnter * simalt ~
 
 " 快捷键，快速导入git模板
 " nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 noremap <space>v ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 
-" => vim-go ---------------------------
-" let g:go_highlight_functions = 1
-" let g:go_highlight_methods = 1
-" let g:go_highlight_structs = 1
-" let g:go_highlight_operators = 1
-" let g:go_highlight_build_constraints = 1
-" let g:go_disable_autoinstall = 0
-
 inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 
-"F3自动格式化代码
-" noremap <F12> :Autoformat<CR>
+" 自动格式化代码
 noremap <space>m :Autoformat<CR>
 let g:autoformat_verbosemode=1
 
@@ -490,26 +374,23 @@ let g:tagbar_type_go = {
             \ 'ctagsargs' : '-sort -silent'
             \ }
 
-" => vim-javascript --------------------------
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_flow = 1
-" augroup javascript_folding
-" au!
-" au FileType javascript setlocal foldmethod=syntax
-" augroup END
-
 " => vim-markdown --------------------------
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_toc_autofit = 1
 
 " filetype plugin on
 "Uncomment to override defaults:
-" let g:instant_markdown_slow = 1
-" let g:instant_markdown_autostart = 0
-let g:instant_markdown_open_to_the_world = 1
-" let g:instant_markdown_allow_unsafe_content = 1
-" let g:instant_markdown_allow_external_content = 0
-let g:instant_markdown_mathjax = 1
+"let g:instant_markdown_slow = 1
+" let g:instant_markdown_autostart = 1
+"let g:instant_markdown_open_to_the_world = 1
+"let g:instant_markdown_allow_unsafe_content = 1
+"let g:instant_markdown_allow_external_content = 0
+"let g:instant_markdown_mathjax = 1
+let g:instant_markdown_logfile = '/tmp/instant_markdown.log'
+"let g:instant_markdown_autoscroll = 0
+" let g:instant_markdown_port = 8888
+let g:instant_markdown_python = 1
+" set shell=bash\ -i
 
 " => ale --------------------------
 let g:ale_sign_column_always = 0
@@ -558,7 +439,6 @@ set shortmess+=c
 " Highlight symbol under cursor on CursorHold
 " autocmd CursorHold * silent call CocActionAsync('highlight')
 
-
 function! s:show_documentation()
     if (index(['vim','help'], &filetype) >= 0)
         execute 'h '.expand('<cword>')
@@ -567,12 +447,40 @@ function! s:show_documentation()
     endif
 endfunction
 
-cmap Fi VimProcBang flow init
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 function! SetupCommandAbbrs(from, to)
     exec 'cnoreabbrev <expr> '.a:from
                 \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
                 \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfunction
+
+" lightline
+let g:lightline = {
+            \ 'active': {
+            \   'left': [
+            \     [ 'mode', 'paste' ],
+            \     [ 'ctrlpmark', 'git', 'diagnostic', 'cocstatus', 'filename', 'method' ]
+            \   ],
+            \   'right':[
+            \     [ 'filetype', 'fileencoding', 'lineinfo', 'percent' ],
+            \     [ 'blame' ]
+            \   ],
+            \ },
+            \ 'component_function': {
+            \   'blame': 'LightlineGitBlame',
+            \ }
+            \ }
+
+function! LightlineGitBlame() abort
+    let blame = get(b:, 'coc_git_blame', '')
+    " return blame
+    return winwidth(0) > 120 ? blame : ''
 endfunction
 
 " Use C to open coc config
@@ -588,5 +496,10 @@ nmap <leader>j   <Plug>(coc-diagnostic-next)
 nmap <leader>k   <Plug>(coc-diagnostic-prev)
 
 " source "~/.vim/ftplugin/rst_tables.vim"
+
+noremap <space>a :CocCommand explorer
+            \ --toggle
+            \ --file-columns=icon
+            \ --width=30 <CR>
 
 
