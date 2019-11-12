@@ -163,6 +163,7 @@ if !empty("$HOME/.vim/plugged/tagbar")
     noremap <space>b :TagbarToggle<CR>
     let g:tagbar_right=1
     let g:tagbar_zoomwidth=1
+    let g:tagbar_width = 30
 endif
 
 " => cscope ---------------------------
@@ -448,11 +449,9 @@ function! s:show_documentation()
 endfunction
 
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-autocmd CursorHold * silent call CocActionAsync('highlight')
 
 function! SetupCommandAbbrs(from, to)
     exec 'cnoreabbrev <expr> '.a:from
@@ -502,4 +501,31 @@ noremap <space>a :CocCommand explorer
             \ --file-columns=icon
             \ --width=30 <CR>
 
+" Use <C-l> for trigger snippet expand.
+" imap <C-l> <Plug>(coc-snippets-expand)
 
+" Use <C-o> for select text for visual placeholder of snippet.
+vmap <C-o> <Plug>(coc-snippets-select)
+
+" Use <C-n> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-n>'
+
+" Use <C-m> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-m>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-n> <Plug>(coc-snippets-expand-jump)
+
+" Make <tab> used for trigger completion, completion confirm, snippet expand and jump like VSCode.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
