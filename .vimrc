@@ -57,7 +57,7 @@ Plug 'https://github.com/dense-analysis/ale'
 " rst
 Plug 'https://github.com/nvie/vim-rst-tables'
 " On-demand loading
-" Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " 美化工具
 Plug 'Chiel92/vim-autoformat'
 " 补全
@@ -127,12 +127,57 @@ call plug#end()
 
 nnoremap <silent> <F5> :call JsBeautify()<CR>
 
+"--------------------nerdcommenter-------------------
+" <leader> cc 注释代码
+" <leader> cu 取消注释 
+" <leader> cm 注释区域
+" <leader> cs 优雅的注释代码
+"
 "--------------------mbbill/undotree-------------------
 nnoremap <F9> :UndotreeToggle<cr>
 if has("persistent_undo")
     set undodir=~/.undodir/
     set undofile
 endif
+
+"--------------------scrooloose/nerdtree-------------------
+"NERDTree快捷键
+" nmap <F2> :NERDTreeToggle  <CR>
+noremap <space>a :NERDTreeToggle<CR>
+" NERDTree.vim
+let g:NERDTreeWinPos="left"
+let g:NERDTreeWinSize=25
+" let g:NERDTreeShowLineNumbers=1
+let g:neocomplcache_enable_at_startup = 1
+let g:NERDChristmasTree=1
+let g:NERDTreeAutoCenter=1
+" let NERDTreeBookmarksFile=$VIM.'\Data\NerdBookmarks.txt'
+let g:NERDTreeMouseMode=2
+let g:NERDTreeShowBookmarks=1
+let g:NERDTreeShowFiles=1
+let g:NERDTreeShowHidden=1
+
+" NERDTress File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+    exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+    exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('sh', 'cyan', 'none', 'cyan', '#151515')
+" call NERDTreeHighlightFile('*', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('js', 'red', 'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 
 "--------------------airblade/vim-gitgutter-------------------
 noremap <silent> gj :GitGutterNextHunk<CR>
@@ -347,6 +392,9 @@ inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP
 noremap <space>m :Autoformat<CR>
 let g:autoformat_verbosemode=1
 
+" noremap <space>q :q<CR>
+" cmap q qall
+
 let g:tagbar_type_go = {
             \ 'ctagstype' : 'go',
             \ 'kinds'     : [
@@ -394,6 +442,8 @@ let g:instant_markdown_python = 1
 " set shell=bash\ -i
 
 " => ale --------------------------
+" let g:ale_pattern_options = {'\.min.cpp$': {'ale_enabled': 0}}
+let g:ale_enabled = 0
 let g:ale_sign_column_always = 0
 let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
@@ -496,10 +546,10 @@ nmap <leader>k   <Plug>(coc-diagnostic-prev)
 
 " source "~/.vim/ftplugin/rst_tables.vim"
 
-noremap <space>a :CocCommand explorer
-            \ --toggle
-            \ --file-columns=icon
-            \ --width=30 <CR>
+" noremap <space>a :CocCommand explorer
+"             \ --toggle
+"             \ --file-columns=icon
+"             \ --width=30 <CR>
 
 " Use <C-l> for trigger snippet expand.
 " imap <C-l> <Plug>(coc-snippets-expand)
