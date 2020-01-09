@@ -34,6 +34,8 @@ set t_Co=256
 " set fillchars=vert: 
 highlight VertSplit ctermbg=black ctermfg=gray
 
+set rtp+=/usr/local/opt/fzf
+
 set background=dark
 
 "insert mode direction key
@@ -49,8 +51,18 @@ map <C-h> <C-W>h
 map <C-k> <C-W>k
 map <C-l> <C-W>l
 
+" 插入模式下输入xtime 插入当前时间
+iab xtime <c-r>=strftime("20%y-%m-%d %H:%M:%S")<cr>
+
+vnoremap Y "+y
+" set clipboard=unnamedplus
+
 " plug.vim 配置
 call plug#begin('~/.vim/plugged')
+
+" color
+Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-webdevicons'
 
 " 静态代码检查
 Plug 'https://github.com/dense-analysis/ale'
@@ -143,7 +155,7 @@ endif
 "--------------------scrooloose/nerdtree-------------------
 "NERDTree快捷键
 " nmap <F2> :NERDTreeToggle  <CR>
-noremap <space>a :NERDTreeToggle<CR>
+" noremap <space>a :NERDTreeToggle<CR>
 " NERDTree.vim
 let g:NERDTreeWinPos="left"
 let g:NERDTreeWinSize=25
@@ -290,10 +302,10 @@ map <leader>p :cp<cr>
 " let g:DoxygenToolkit_briefTag_funcName="yes"
 " let g:doxygen_enhanced_color=1
 if !exists("g:DoxygenToolkit_briefTag_lic_pre")
-    let g:DoxygenToolkit_briefTag_lic_pre = "@brief:   "
+    let g:DoxygenToolkit_briefTag_lic_pre = "@brief: "
 endif
 if !exists("g:DoxygenToolkit_briefTag_pre")
-    let g:DoxygenToolkit_briefTag_pre = "@brief: "
+    let g:DoxygenToolkit_briefTag_pre = "@brief:   "
 endif
 if !exists("g:DoxygenToolkit_fileTag")
     let g:DoxygenToolkit_fileTag = "@file:    "
@@ -318,7 +330,7 @@ function! <SID>DoxygenLicenseFunc()
     if !exists("g:DoxygenToolkit_authorName")
         let g:DoxygenToolkit_authorName = input("Enter name of the author (generally yours...) : ")
     endif
-    mark d
+    " mark d
 
     " Get file name
     let l:fileName = expand('%:t')
@@ -329,7 +341,7 @@ function! <SID>DoxygenLicenseFunc()
     exec "normal o".s:interCommentTag.l:license
     exec "normal o".s:interCommentTag.g:DoxygenToolkit_fileTag.l:fileName
     exec "normal o".s:interCommentTag.g:DoxygenToolkit_briefTag_lic_pre
-    mark d
+    " mark d
     exec "normal o".s:interCommentTag.g:DoxygenToolkit_authorTag.g:DoxygenToolkit_authorName
     exec "normal o".s:interCommentTag.g:DoxygenToolkit_versionTag."1.0"
     let l:date = strftime("%Y-%m-%d")
@@ -471,7 +483,7 @@ let g:ale_linters = {
 " highlight clear ALEErrorSign
 " highlight clear ALEWarningSign
 
-" => coc --------------------------
+"  coc --------------------------
 " if hidden is not set, TextEdit might fail.
 set hidden
 " Some servers have issues with backup files, see #649
@@ -546,10 +558,7 @@ nmap <leader>k   <Plug>(coc-diagnostic-prev)
 
 " source "~/.vim/ftplugin/rst_tables.vim"
 
-" noremap <space>a :CocCommand explorer
-"             \ --toggle
-"             \ --file-columns=icon
-"             \ --width=30 <CR>
+noremap <space>a :CocCommand explorer --toggle <CR>
 
 " Use <C-l> for trigger snippet expand.
 " imap <C-l> <Plug>(coc-snippets-expand)
@@ -566,6 +575,9 @@ let g:coc_snippet_prev = '<c-m>'
 " Use <C-j> for both expand and jump (make expand higher priority.)
 imap <C-n> <Plug>(coc-snippets-expand-jump)
 
+nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
+hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
+
 " Make <tab> used for trigger completion, completion confirm, snippet expand and jump like VSCode.
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? coc#_select_confirm() :
@@ -579,3 +591,16 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
+
+" => vim-devicons --------------------------
+set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
+" required if using https://github.com/bling/vim-airline
+let g:webdevicons_enable = 1
+let g:airline_powerline_fonts=1
+let g:webdevicons_enable_ctrlp = 1
+let g:webdevicons_enable_nerdtree = 1
+let g:webdevicons_enable_airline_tabline = 1
+let g:webdevicons_enable_airline_statusline = 1
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
+
+
