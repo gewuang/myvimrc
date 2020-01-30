@@ -89,12 +89,13 @@ Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 " Plug 'https://github.com/nsf/gocode.git'
 " js的补全工具（暂时没怎么用）
 Plug 'https://github.com/ternjs/tern_for_vim.git'
-" markdown预览
-Plug 'https://github.com/suan/vim-instant-markdown'
 
 " Plugin outside ~/.vim/plugged with post-update hook
 " unix命令行工具
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+
+" dash
+Plug 'rizzatti/dash.vim'
 
 " HTML, CSS, JavaScript, PHP, JSON, etc.
 Plug 'elzr/vim-json'
@@ -102,6 +103,7 @@ Plug 'hail2u/vim-css3-syntax'
 " Plug 'spf13/PIV', { 'for' :['php', 'vim-plug'] }
 Plug 'gko/vim-coloresque', { 'for': ['vim-plug', 'php', 'html', 'javascript', 'css', 'less'] }
 Plug 'pangloss/vim-javascript', { 'for' :['javascript', 'vim-plug'] }
+Plug 'mattn/emmet-vim'
 
 " Plug 'roxma/clang_complete'
 " " Language Server
@@ -131,7 +133,12 @@ Plug 'scrooloose/nerdcommenter'
 
 " 整理格式:Tab /*
 Plug 'godlygeek/tabular'
+
 Plug 'plasticboy/vim-markdown'
+Plug 'iamcco/mathjax-support-for-mkdp'
+Plug 'iamcco/markdown-preview.vim'
+Plug 'mzlogin/vim-markdown-toc'     "generate markdown's catalog
+
 Plug 'vim-scripts/TaskList.vim'
 " python库的补全
 Plug 'davidhalter/jedi'
@@ -398,7 +405,6 @@ let g:ctrlp_follow_symlinks=1
 noremap <silent> bu :BufExplorer<CR>
 
 " 快捷键，快速导入git模板
-" nmap <F6> ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 noremap <space>v ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
 
 inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
@@ -599,14 +605,24 @@ let g:coc_snippet_next = '<tab>'
 " => vim-devicons --------------------------
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
 " required if using https://github.com/bling/vim-airline
+let g:WebDevIconsOS = 'Darwin'
 let g:webdevicons_enable = 1
 let g:airline_powerline_fonts=1
 let g:webdevicons_enable_ctrlp = 1
 let g:webdevicons_enable_nerdtree = 1
+let g:webdevicons_enable_vimfiler = 1
+let g:webdevicons_enable_startify = 1
 let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
 let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
 
+set guifont=MesloLGL_Nerd_Font:h15
+
+" change the default character when no match found
+" let g:WebDevIconsUnicodeDecorateFileNodesDefaultSymbol = 'ƛ'
+let g:WebDevIconsUnicodeByteOrderMarkerDefaultSymbol = ''
+" enable folder/directory glyph flag (disabled by default with 0)
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 
 " => tiagofumo/vim-nerdtree-syntax-highlight --------------------------
 " let g:NERDTreeFileExtensionHighlightFullName = 1
@@ -650,3 +666,12 @@ let g:NERDTreePatternMatchHighlightColor = {} " this line is needed to avoid err
 let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red " sets the color for files ending with _spec.rb
 
 let g:NERDTreeHighlightCursorline = 0
+
+" => rizzatti/dash.vim--------------------------
+nmap <silent> <leader>d <Plug>DashSearch
+
+" => rizzatti/dash.vim--------------------------
+nmap <Leader>m :MarkdownPreview<CR>
+nmap <Leader>z :MarkdownPreviewStop<CR>
+
+:nmap <F6> :w <Bar> !open %<CR>
