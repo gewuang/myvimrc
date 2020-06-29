@@ -24,19 +24,35 @@ set vb t_vb=
 set path+=/usr/local/include/
 set path+=/usr/local/lib/node_modules
 
+set fileformat=unix
+
+" 设置 vimrc 修改保存后立刻生效，不用在重新打开
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
 if !has("gui_running")
     set t_Co=256
     " set term=screen-256color
 endif
 set t_Co=256
-" colorscheme molokai
-" colorscheme OceanicNext 
 " set fillchars=vert: 
 highlight VertSplit ctermbg=black ctermfg=gray
 
 set rtp+=/usr/local/opt/fzf
+tnoremap <m-q> <c-\><c-n>
 
-set background=dark
+" This is only necessary if you use "set termguicolors".
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+" fixes glitch? in colors when using vim with tmux
+
+" set background=dark
+set guicursor=i:block-iCursor-blinkon0,v:block-vCursor
+set guicursor+=a:blinkon0
+
+" set termguicolors
+" colorscheme solarized 
+" set termguicolors
 
 "insert mode direction key
 inoremap <C-y> <Left>
@@ -60,6 +76,15 @@ vnoremap Y "+y
 " plug.vim 配置
 call plug#begin('~/.vim/plugged')
 
+" Plug 'ludovicchabant/vim-gutentags'
+
+" 语言包
+" Plug 'sheerun/vim-polyglot'
+" 下面两个插件要配合使用，可以自动生成代码块
+" 代码片段
+" Plug 'https://github.com/SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
+
 " color
 Plug 'ryanoasis/vim-devicons'
 Plug 'ryanoasis/vim-webdevicons'
@@ -67,7 +92,7 @@ Plug 'ryanoasis/vim-webdevicons'
 " 静态代码检查
 Plug 'https://github.com/dense-analysis/ale'
 " rst
-Plug 'https://github.com/nvie/vim-rst-tables'
+" Plug 'https://github.com/nvie/vim-rst-tables'
 " On-demand loading
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " 美化工具
@@ -84,15 +109,25 @@ Plug 'https://github.com/vim-airline/vim-airline'
 " 代码注释软件
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 " go命令工具
-" Plug 'https://github.com/fatih/vim-go.git'
+Plug 'https://github.com/fatih/vim-go.git'
+" go 中的代码追踪，输入 gd 就可以自动跳转
+" Plug 'dgryski/vim-godef'
+
+" Plug 'https://github.com/Shougo/deoplete.nvim'
 " go补全工具
 " Plug 'https://github.com/nsf/gocode.git'
 " js的补全工具（暂时没怎么用）
-Plug 'https://github.com/ternjs/tern_for_vim.git'
+" Plug 'https://github.com/ternjs/tern_for_vim.git', { 'do': 'npm install && npm install -g tern' }
+
+" css color preview
+Plug 'https://github.com/ap/vim-css-color'
 
 " Plugin outside ~/.vim/plugged with post-update hook
 " unix命令行工具
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+
+" dockerfile 高亮
+Plug 'ekalinin/Dockerfile.vim'
 
 " dash
 Plug 'rizzatti/dash.vim'
@@ -105,6 +140,8 @@ Plug 'gko/vim-coloresque', { 'for': ['vim-plug', 'php', 'html', 'javascript', 'c
 Plug 'pangloss/vim-javascript', { 'for' :['javascript', 'vim-plug'] }
 Plug 'mattn/emmet-vim'
 
+" Plug 'skywind3000/vim-terminal-help'
+
 " Plug 'roxma/clang_complete'
 " " Language Server
 " Plug 'autozimu/LanguageClient-neovim', {
@@ -113,9 +150,9 @@ Plug 'mattn/emmet-vim'
 " \ }
 " " (Optional) Multi-entry selection UI.
 " js 美化
-Plug 'maksimr/vim-jsbeautify'
+" Plug 'maksimr/vim-jsbeautify'
 " 显示修改列表
-Plug 'mbbill/undotree'
+" Plug 'mbbill/undotree'
 " 快速搜索
 Plug 'rking/ag.vim'
 " 标记软件
@@ -127,7 +164,7 @@ Plug 'jlanzarotta/bufexplorer'
 " git操作
 Plug 'airblade/vim-gitgutter'
 " 快捷操作转换为命令，看起来很厉害
-Plug 'scrooloose/nerdcommenter'
+" Plug 'scrooloose/nerdcommenter'
 " 开始欢迎界面，暂不需要
 " Plug 'mhinz/vim-startify'
 
@@ -136,12 +173,11 @@ Plug 'godlygeek/tabular'
 
 Plug 'plasticboy/vim-markdown'
 Plug 'iamcco/mathjax-support-for-mkdp'
-Plug 'iamcco/markdown-preview.vim'
-Plug 'mzlogin/vim-markdown-toc'     "generate markdown's catalog
+" Plug 'mzlogin/vim-markdown-toc'     "generate markdown's catalog
 
 Plug 'vim-scripts/TaskList.vim'
 " python库的补全
-Plug 'davidhalter/jedi'
+" Plug 'davidhalter/jedi'
 
 call plug#end()
 
@@ -233,6 +269,24 @@ if !empty("$HOME/.vim/plugged/tagbar")
     let g:tagbar_zoomwidth=1
     let g:tagbar_width = 30
 endif
+
+let g:tagbar_type_markdown = {
+      \ 'ctagstype' : 'markdown',
+      \ 'kinds' : [
+      \ 'h:Heading_L1',
+      \ 'i:Heading_L2',
+      \ 'k:Heading_L3'
+      \ ]
+      \ }
+let g:tagbar_type_javascript = {
+      \ 'ctagsbin' : 'jsctags'
+      \ }
+
+" => vim-javascript ---------------------------
+let g:javascript_plugin_jsdoc = 1
+let javascript_enable_domhtmlcss = 1
+let g:javascript_plugin_ngdoc = 1
+let g:javascript_plugin_flow = 1
 
 " => cscope ---------------------------
 set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -381,7 +435,7 @@ noremap <space>k :call <SID>Printdebugmsg()<CR>
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+            \ 'dir':  '\v[\/]\.(git|hg|svn|rvm|ccls-cache)$',
             \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
             \ }
 "use ag as the ctrlp command
@@ -390,6 +444,7 @@ let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden
             \ --ignore out
             \ --ignore .svn
             \ --ignore .hg
+            \ --ignore .ccls-cache
             \ --ignore .DS_Store
             \ -g ""'
 
@@ -403,12 +458,6 @@ let g:ctrlp_mruf_max=500
 let g:ctrlp_follow_symlinks=1
 
 noremap <silent> bu :BufExplorer<CR>
-
-" 快捷键，快速导入git模板
-noremap <space>v ggO<Esc>gg:r ~/.vim/git/default.txt<cr>
-
-inoremap \gitf  [feature][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
-inoremap \gitb  [bugfix][][]<CR><CR>[what]<CR>[why]<CR>[how]<CR><UP><END><UP><UP><UP><UP><Left><Left><Left>
 
 " 自动格式化代码
 noremap <space>m :Autoformat<CR>
@@ -568,39 +617,39 @@ nmap <leader>k   <Plug>(coc-diagnostic-prev)
 
 " source "~/.vim/ftplugin/rst_tables.vim"
 
-" noremap <space>a :CocCommand explorer --toggle <CR>
+noremap <space>q :CocCommand explorer --toggle <CR>
 
 " Use <C-l> for trigger snippet expand.
 " imap <C-l> <Plug>(coc-snippets-expand)
 
 " Use <C-o> for select text for visual placeholder of snippet.
-vmap <C-o> <Plug>(coc-snippets-select)
+" vmap <C-o> <Plug>(coc-snippets-select)
 
-" Use <C-n> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<c-n>'
+" " Use <C-n> for jump to next placeholder, it's default of coc.nvim
+" let g:coc_snippet_next = '<c-n>'
 
-" Use <C-m> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<c-m>'
+" " Use <C-m> for jump to previous placeholder, it's default of coc.nvim
+" let g:coc_snippet_prev = '<c-m>'
 
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-n> <Plug>(coc-snippets-expand-jump)
+" " Use <C-j> for both expand and jump (make expand higher priority.)
+" imap <C-n> <Plug>(coc-snippets-expand-jump)
 
-nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
-hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
+" nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
+" hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
 
-" Make <tab> used for trigger completion, completion confirm, snippet expand and jump like VSCode.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+" " Make <tab> used for trigger completion, completion confirm, snippet expand and jump like VSCode.
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
 
-let g:coc_snippet_next = '<tab>'
+" let g:coc_snippet_next = '<tab>'
 
 " => vim-devicons --------------------------
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
@@ -666,6 +715,7 @@ let g:NERDTreePatternMatchHighlightColor = {} " this line is needed to avoid err
 let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red " sets the color for files ending with _spec.rb
 
 let g:NERDTreeHighlightCursorline = 0
+let g:python_host_prog=1
 
 " => rizzatti/dash.vim--------------------------
 nmap <silent> <leader>d <Plug>DashSearch
@@ -675,3 +725,47 @@ nmap <Leader>m :MarkdownPreview<CR>
 nmap <Leader>z :MarkdownPreviewStop<CR>
 
 :nmap <F6> :w <Bar> !open %<CR>
+
+" => skywind3000/vim-terminal-help --------------------------
+"
+" Usage
+" ALT + =: toggle terminal below" .
+" ALT + SHIFT + h: move to the window on the left.
+" ALT + SHIFT + l: move to the window on the right.
+" ALT + SHIFT + j: move to the window below.
+" ALT + SHIFT + k: move to the window above.
+" ALT + SHIFT + p: move to the previous window.
+" ALT + -: paste register 0 to terminal.
+" ALT + q: switch to terminal normal mode.
+"
+
+" " => fatih/vim-go --------------------------
+" let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
+" let g:go_autodetect_gopath = 1
+let g:go_list_type = "quickfix"
+let g:go_list_type_commands = {"GoTest": "quickfix", "GoBuild": "quickfix"}
+let g:go_version_warning = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_generate_tags = 1
+let g:go_def_mode = 'gopls'
+let g:go_info_mode = 'gopls'
+let g:go_gopls_enabled = 1
+let g:go_def_mapping_enabled = 1
+" autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+" let g:go_debug=['shell-commands']
+let g:go_term_enabled = 1
+let g:go_term_close_on_exit = 0
+let g:go_term_mode = 'split'
+let g:go_term_height = 10
+highlight link goBuiltins Keyword
+let $GINKGO_EDITOR_INTEGRATION = "true"
+
+" => deoplete --------------------------
+
+" let g:deoplete#enable_at_startup = 1
