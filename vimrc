@@ -68,10 +68,6 @@ Plug 'rking/ag.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'ryanoasis/vim-webdevicons'
 
-" 目录树
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " 目录树美化
-
 " 格式自动化
 Plug 'Chiel92/vim-autoformat'
 
@@ -116,6 +112,13 @@ Plug 'kshenoy/vim-signature'
 
 " go命令工具
 " Plug 'https://github.com/fatih/vim-go.git'
+
+" 文件目录显示
+Plug 'https://github.com/Shougo/defx.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'kristijanhusak/defx-icons'
+" Plug 'kristijanhusak/defx-git'
 
 " dash
 Plug 'rizzatti/dash.vim'
@@ -168,26 +171,6 @@ noremap <space>q :FZF<CR>
 " => .vimrc ag.vim 配置----------------------------
 set runtimepath^=~/.vim/plugged/ag.vim
 
-" => scrooloose/nerdtree-------------------------
-" NERDTree快捷键
-" nmap <F2> :NERDTreeToggle  <CR>
-noremap <space>a :NERDTreeToggle<CR>
-" NERDTree.vim
-let g:NERDTreeWinPos="left"
-let g:NERDTreeWinSize=25
-" let g:NERDTreeShowLineNumbers=1
-let g:neocomplcache_enable_at_startup = 1
-let g:NERDChristmasTree=1
-let g:NERDTreeAutoCenter=1
-" let NERDTreeBookmarksFile=$VIM.'\Data\NerdBookmarks.txt'
-let g:NERDTreeMouseMode=2
-let g:NERDTreeShowBookmarks=1
-let g:NERDTreeShowFiles=1
-let g:NERDTreeShowHidden=1
-
-" 当NERDTree为剩下的唯一窗口时自动关闭
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 " => vim-devicons --------------------------
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
 " required if using https://github.com/bling/vim-airline
@@ -195,12 +178,10 @@ let g:WebDevIconsOS = 'Darwin'
 let g:webdevicons_enable = 1
 let g:airline_powerline_fonts=1
 let g:webdevicons_enable_ctrlp = 1
-let g:webdevicons_enable_nerdtree = 1
 let g:webdevicons_enable_vimfiler = 1
 let g:webdevicons_enable_startify = 1
 let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
-let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
 
 set guifont=MesloLGL_Nerd_Font:h15
 
@@ -209,10 +190,6 @@ set guifont=MesloLGL_Nerd_Font:h15
 let g:WebDevIconsUnicodeByteOrderMarkerDefaultSymbol = ''
 " enable folder/directory glyph flag (disabled by default with 0)
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
-
-" => tiagofumo/vim-nerdtree-syntax-highlight --------------------------
-let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
-let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
 
 " 自动格式化代码
 " => Chiel92/vim-autoformat --------------------------------------
@@ -539,4 +516,72 @@ nmap <leader>k   <Plug>(coc-diagnostic-prev)
 " source "~/.vim/ftplugin/rst_tables.vim"
 
 " noremap <space>q :CocCommand explorer --toggle <CR>
+
+" => defx ---------------------------
+noremap <space>a :Defx -columns=mark:indent:icons:filename:type<CR>
+call defx#custom#option('_', {
+      \ 'winwidth': 30,
+      \ 'split': 'vertical',
+      \ 'direction': 'topleft',
+      \ 'show_ignored_files': 0,
+      \ 'buffer_name': '',
+      \ 'toggle': 2,
+      \ 'resume': 1
+      \ })
+
+" Avoid the white space highting issue
+" autocmd FileType defx match ExtraWhitespace /^^/
+" Keymap in defx
+autocmd FileType defx call s:defx_my_settings()
+function! s:defx_my_settings() abort
+  " IndentLinesDisable
+  setl nospell
+  setl signcolumn=no
+  setl nonumber
+  nnoremap <silent><buffer><expr> <CR>
+  \ defx#is_directory() ?
+  \ defx#do_action('open_or_close_tree') :
+  \ defx#do_action('drop',)
+  nmap <silent><buffer><expr> <2-LeftMouse>
+  \ defx#is_directory() ?
+  \ defx#do_action('open_or_close_tree') :
+  \ defx#do_action('drop',)
+  nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
+  nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
+  nnoremap <silent><buffer><expr> t defx#do_action('drop', 'tabe')
+  nnoremap <silent><buffer><expr> l defx#do_action('open_tree')
+  nnoremap <silent><buffer><expr> O defx#do_action('open_tree_recursive')
+  nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
+  nnoremap <silent><buffer><expr> C defx#do_action('copy')
+  nnoremap <silent><buffer><expr> P defx#do_action('paste')
+  nnoremap <silent><buffer><expr> M defx#do_action('rename')
+  nnoremap <silent><buffer><expr> D defx#do_action('remove_trash')
+  nnoremap <silent><buffer><expr> A defx#do_action('new_multiple_files')
+  nnoremap <silent><buffer><expr> H defx#do_action('cd', ['..'])
+  nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+  nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select')
+  nnoremap <silent><buffer><expr> R defx#do_action('redraw')
+endfunction
+
+function! s:defx_toggle_tree() abort
+    " Open current file, or toggle directory expand/collapse
+    if defx#is_directory()
+        return defx#do_action('open_or_close_tree')
+    endif
+    return defx#do_action('multi', ['drop'])
+endfunction
+
+let g:defx_icons_enable_syntax_highlight = 1
+let g:defx_icons_column_length = 2
+let g:defx_icons_directory_icon = ''
+let g:defx_icons_mark_icon = '*'
+let g:defx_icons_copy_icon = ''
+let g:defx_icons_move_icon = ''
+let g:defx_icons_parent_icon = ''
+let g:defx_icons_default_icon = ''
+let g:defx_icons_directory_symlink_icon = ''
+" Options below are applicable only when using "tree" feature
+let g:defx_icons_root_opened_tree_icon = ''
+let g:defx_icons_nested_opened_tree_icon = ''
+let g:defx_icons_nested_closed_tree_icon = ''
 
