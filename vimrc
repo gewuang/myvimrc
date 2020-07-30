@@ -20,6 +20,13 @@ set termencoding=utf-8
 set encoding=utf-8
 set cursorline
 set vb t_vb=
+highlight VertSplit ctermbg=black ctermfg=gray
+" highlight SignColumn guibg=dark guifg=dark
+" 清除标记栏颜色
+highlight clear SignColumn
+
+set modifiable
+set updatetime=50
 
 set fileformat=unix
 
@@ -111,7 +118,7 @@ Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim.git'
 Plug 'kshenoy/vim-signature'
 
 " go命令工具
-" Plug 'https://github.com/fatih/vim-go.git'
+Plug 'https://github.com/fatih/vim-go.git'
 
 " 文件目录显示
 Plug 'https://github.com/Shougo/defx.nvim'
@@ -129,26 +136,13 @@ Plug 'vim-scripts/TaskList.vim'
 Plug 'davidhalter/jedi'
 
 " unix命令行工具
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-Plug 'junegunn/fzf.vim'
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+" Plug 'junegunn/fzf.vim'
 
 " 补全
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
-
-" => skywind3000/vim-terminal-help --------------------------
-"
-" Usage
-" ALT + =: toggle terminal below" .
-" ALT + SHIFT + h: move to the window on the left.
-" ALT + SHIFT + l: move to the window on the right.
-" ALT + SHIFT + j: move to the window below.
-" ALT + SHIFT + k: move to the window above.
-" ALT + SHIFT + p: move to the previous window.
-" ALT + -: paste register 0 to terminal.
-" ALT + q: switch to terminal normal mode.
-
 
 " => rizzatti/dash.vim--------------------------
 nmap <silent> <leader>d <Plug>DashSearch
@@ -341,7 +335,7 @@ noremap <silent> fl :DoxAuthor <CR>
 noremap <silent> ff :Dox <CR>
 
 
-"--------------------airblade/vim-gitgutter-------------------
+" => airblade/vim-gitgutter -------------------------------
 noremap <silent> gj :GitGutterNextHunk<CR>
 noremap <silent> gk :GitGutterPrevHunk<CR>
 noremap <silent> gq :GitGutterUndoHunk<CR>
@@ -351,34 +345,37 @@ noremap <silent> gc :pclose<CR>
 let g:gitgutter_max_signs = 500  " default value
 let g:gitgutter_grep = 'ag'
 let g:gitgutter_terminal_reports_focus=0
-set updatetime=50
+highlight GitGutterAdd    guifg=#009900 ctermfg=2
+highlight GitGutterChange guifg=#bbbb00 ctermfg=3
+highlight GitGutterDelete guifg=#ff2222 ctermfg=1
 
 " " => fatih/vim-go --------------------------
-" let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
-" let g:go_autodetect_gopath = 1
-" let g:go_list_type = "quickfix"
-" let g:go_list_type_commands = {"GoTest": "quickfix", "GoBuild": "quickfix"}
-" let g:go_version_warning = 1
-" let g:go_highlight_types = 1
-" let g:go_highlight_fields = 1
-" let g:go_highlight_functions = 1
-" let g:go_highlight_function_calls = 1
-" let g:go_highlight_operators = 1
-" let g:go_highlight_extra_types = 1
-" let g:go_highlight_methods = 1
-" let g:go_highlight_generate_tags = 1
-" let g:go_def_mode = 'gopls'
-" let g:go_info_mode = 'gopls'
-" let g:go_gopls_enabled = 1
-" let g:go_def_mapping_enabled = 1
-" " autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
-" " let g:go_debug=['shell-commands']
-" let g:go_term_enabled = 1
-" let g:go_term_close_on_exit = 0
-" let g:go_term_mode = 'split'
-" let g:go_term_height = 10
-" highlight link goBuiltins Keyword
-" let $GINKGO_EDITOR_INTEGRATION = "true"
+let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
+let g:go_autodetect_gopath = 1
+let g:go_list_type = "quickfix"
+let g:go_list_type_commands = {"GoTest": "quickfix", "GoBuild": "quickfix"}
+let g:go_version_warning = 1
+let g:go_highlight_generate_tags = 1
+let g:go_def_mode = 'gopls'
+let g:go_info_mode = 'gopls'
+let g:go_gopls_enabled = 1
+let g:go_def_mapping_enabled = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_generate_tags = 1
+" autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+" let g:go_debug=['shell-commands']
+let g:go_term_enabled = 1
+let g:go_term_close_on_exit = 0
+let g:go_term_mode = 'split'
+let g:go_term_height = 10
+highlight link goBuiltins Keyword
+let $GINKGO_EDITOR_INTEGRATION = "true"
 
 " => Ckien/ctrlp.vim ---------------------------
 let g:ctrlp_custom_ignore = {
@@ -440,6 +437,9 @@ nmap <space>p :cprev<CR>
 
 " => coc ---------------------------
 autocmd FileType json syntax match Comment +\/\/.\+$+
+noremap <space>q :CocList -N files<CR>
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 
 " if hidden is not set, TextEdit might fail.
 set hidden
@@ -555,7 +555,7 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> C defx#do_action('copy')
   nnoremap <silent><buffer><expr> P defx#do_action('paste')
   nnoremap <silent><buffer><expr> M defx#do_action('rename')
-  nnoremap <silent><buffer><expr> D defx#do_action('remove_trash')
+  nnoremap <silent><buffer><expr> D defx#do_action('remove')
   nnoremap <silent><buffer><expr> A defx#do_action('new_multiple_files')
   nnoremap <silent><buffer><expr> H defx#do_action('cd', ['..'])
   nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
@@ -572,7 +572,7 @@ function! s:defx_toggle_tree() abort
 endfunction
 
 let g:defx_icons_enable_syntax_highlight = 1
-let g:defx_icons_column_length = 2
+let g:defx_icons_column_length = 1
 let g:defx_icons_directory_icon = ''
 let g:defx_icons_mark_icon = '*'
 let g:defx_icons_copy_icon = ''
