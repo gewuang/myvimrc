@@ -18,12 +18,14 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set fileformats=unix,dos
 set termencoding=utf-8
 set encoding=utf-8
+set autowrite
 " set cursorline
 set vb t_vb=
 " highlight SignColumn guibg=dark guifg=dark
 " 清除标记栏颜色
 highlight VertSplit ctermbg=black ctermfg=gray
 highlight clear SignColumn
+" set termguicolors
 
 set modifiable
 set updatetime=50
@@ -57,6 +59,7 @@ vnoremap Y "+y
 
 nmap < :bp<CR>
 nmap > :bn<CR>
+nmap E :e<CR>
 
 noremap <silent> gs :GoTest -v -run <C-R>=expand("<cword>")<CR><CR>
 
@@ -103,6 +106,9 @@ Plug 'skywind3000/vim-terminal-help'
 
 Plug 'dbeniamine/cheat.sh-vim'
 
+" 自动更新tags文件
+Plug 'ludovicchabant/vim-gutentags'
+
 " 快捷操作
 " 边缘操作
 Plug 'https://github.com/tpope/vim-surround'
@@ -138,7 +144,7 @@ Plug 'kshenoy/vim-signature'
 " go命令工具
 " Plug 'https://github.com/fatih/vim-go.git'
 " Plug 'fatih/vim-go', { 'tag': 'v1.22', 'for': 'go' }
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' , 'for': 'go' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " 文件目录显示
 Plug 'https://github.com/Shougo/defx.nvim'
@@ -463,6 +469,7 @@ noremap <space>q :CocList -N files<CR>
 nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-snippets', 'coc-lists', 'coc-pairs', 'coc-yank', 'coc-clangd', 'coc-python', 'coc-sh', 'coc-json', 'coc-tsserver', 'coc-xml', 'coc-html']
+" let g:coc_global_extensions = ['coc-highlight', 'coc-json', 'coc-vimlsp', 'coc-snippets', 'coc-lists', 'coc-pairs', 'coc-yank', 'coc-clangd', 'coc-python', 'coc-sh', 'coc-json', 'coc-tsserver', 'coc-xml', 'coc-html']
 
 " if hidden is not set, TextEdit might fail.
 set hidden
@@ -478,9 +485,6 @@ set shortmess+=c
 
 " Use K to show documentation in preview window
 " nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" Highlight symbol under cursor on CursorHold
-" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 function! s:show_documentation()
     if (index(['vim','help'], &filetype) >= 0)
@@ -732,5 +736,40 @@ let g:ale_lint_on_enter = 0
 let g:ale_linters = {
 \   'c++': ['clang'],
 \   'c': ['clang'],
+\   'go': ['golint'],
 \   'python': ['pylint'],
 \}
+let g:ale_completion_autoimport = 1
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'javascript': [
+\       'DoSomething',
+\       'eslint',
+\       {buffer, lines -> filter(lines, 'v:val !=~ ''^\s*//''')},
+\   ],
+\   'go': ['gofmt'],
+\}
+" let g:ale_fix_on_save = 1
+
+nmap <F8> <Plug>(ale_fix)
+
+" => vim-gutentags
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
